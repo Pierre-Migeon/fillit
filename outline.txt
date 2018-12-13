@@ -1,0 +1,17 @@
+
+
+
+
+	1) check to see if there is one argument and return the usage statement otherwise
+	2) check to see that the input file of tertiminos is valid: 
+		a) 4 blocks for each tetrimino
+		b) each block is touching another
+		c) characters are either # or . 
+		d) the tertimino space is a 4x4 block
+	3) normalize the tertriminos -> bring each tetrimino to the upper left corner
+	4) 
+
+	3) algorithms 
+	4) ????
+	5) PROFIT
+
