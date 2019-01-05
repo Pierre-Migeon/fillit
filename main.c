@@ -11,41 +11,67 @@
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include "./libft/libft.h"
+#include "../libft/libft.h"
 #include <fcntl.h>
 #include <stdio.h>
 
-void	normalize(char *str)
+void	ft_strshift(char *str, unsigned int n)
+{
+	char	*buf;
+	int		len;
+
+	if (!str)
+		return ;
+	len = ft_strlen(str);
+	if ((n %= len) == 0 || !(buf = ft_strnew(len)))
+		return ;
+	ft_memcpy(buf, str + n, len - n);
+	ft_memcpy(buf + len - n, str, n);
+	ft_memcpy(str, buf, len);
+	ft_strdel(&buf);
+}
+
+int	check_row1(char *str)
+{
+	int i; 
+
+	i = 0;
+	while (i < 4)
+	{
+		if (str[i] == '#')
+			return (0);
+		++i;
+	}
+	return (1);
+}
+
+int	check_col1(char *str)
 {
 	int i;
-	int j;
-	int swit;
-	int yoffset;
-	int xoffset;
 
-	i = -1;
-	swit = -1;
-	while (i++ < 3)
+	i = 0;
+	while (i <= 15)
 	{
-		j = i;
-		while (j <= 20)
-		{
-			if (str[j] == '#')
-			{
-				if (swit == -1 && swit++)
-				{
-					xoffset = i;
-					yoffset = j / 5;
-					printf("xoffset is %i j is %i yoffset is %i\n", xoffset, j, yoffset);
-				}
-				if (xoffset > 0 || yoffset > 0)
-				{
-					str[j] = '.';
-					str[j - xoffset - yoffset*5] = '#';
-				}
-			}
-			j += 5;
-		}
+		if (str[i] == '#')
+			return (0);
+		i += 5;
+	}
+	return (1);
+}
+
+void	ft_strrevolve(char *str, unsigned int wide, unsigned int tall)
+{
+	unsigned int	row;
+	unsigned int	w;
+	char			tmp;
+
+	row = -1;
+	while (++row < tall)
+	{
+		w = -1;
+		while (++w < wide - 2)
+			str[row * wide + w] = str[row * wide + w + 1];
+		str[row * wide + w] = '.';
 	}
 }
 
@@ -118,7 +144,10 @@ int	valid_input(int fd, char **str)
 		str[i] = ft_strdup(buf);
 		if (check_piece(str[i]) == 1 || check_shape(str[i]) == 0)
 			return (1);
-		normalize(str[i]);
+		while (check_row1(str[i]))
+			ft_strshift(str[i], 5);
+		while (check_col1(str[i]))
+			ft_strrevolve(str[i], 5, 4);
 		ft_putstr(str[i]);
 		++i;
 	}
