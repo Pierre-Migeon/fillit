@@ -15,6 +15,45 @@
 #include <fcntl.h>
 #include <stdio.h>
 
+int	frt(int x)
+{ 
+	if (x == 0 || x == 1) 
+		return x;  
+	int i = 1; 
+	int result = 1; 
+	while (result <= x) 
+	{ 
+		i++; 
+		result = i * i; 
+	}
+	return (i - 1);
+}
+
+/*
+void	recursive_solve()
+{
+
+
+
+}
+*/
+
+void	solve(char **str)
+{
+	int i;
+	int boardsize;
+
+	i = 0;
+	while(str[i])
+		++i;
+	boardsize = frt(4*i);
+	printf("\nboardsize is %i\n", boardsize);
+/*	while (boardsize <= 10)
+	{
+		recursive_solve(create_map(boardsize), );
+	} */
+}
+
 void	ft_strshift(char *str, unsigned int n)
 {
 	char	*buf;
@@ -150,6 +189,7 @@ int	valid_input(int fd, char **str)
 		ft_putstr(str[i]);
 		++i;
 	}
+	str[i] = NULL;
 	return (0);
 }
 
@@ -172,8 +212,6 @@ int		main(int argc, char **argv)
 		ft_putstr("error");
 		return (1);
 	}
-/*
-	ft_normalize(stored_array)
-*/
+	solve(stored_array);
 	return (0);
 }
