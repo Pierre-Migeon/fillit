@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include "../libft/libft.h"
+#include "./libft/libft.h"
 #include <fcntl.h>
 #include <stdio.h>
 
@@ -63,7 +63,6 @@ void	ft_strrevolve(char *str, unsigned int wide, unsigned int tall)
 {
 	unsigned int	row;
 	unsigned int	w;
-	char			tmp;
 
 	row = -1;
 	while (++row < tall)
@@ -127,7 +126,7 @@ int	check_piece(char *str)
 		++i;
 	}
 	if (hash != 4 || i != 20 || dots != 12)
-		return (1);
+ 		return (1);
 	return (0);
 }
 
