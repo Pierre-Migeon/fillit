@@ -11,9 +11,32 @@
 /* ************************************************************************** */
 
 #include <unistd.h>
+#include "fillit.h"
 #include "./libft/libft.h"
 #include <fcntl.h>
 #include <stdio.h>
+
+uint16_t	convert_to_binary(char *str)
+{
+	uint16_t number;
+        int bit;
+        int i;
+
+        bit = 32768;
+        i = 0;
+	number = 0;
+        while (bit && str[i])
+        {
+                if (str[i] != '\n')
+                {
+                        if (str[i] == '#')
+                                number |= bit;
+                        bit >>= 1;
+                }
+                i++;
+        }
+	return (number);
+}
 
 int	frt(int x)
 { 
@@ -30,27 +53,43 @@ int	frt(int x)
 }
 
 /*
-void	recursive_solve()
+int	recursive_solve(char **map, )
 {
 
 
+	return (0);
+}
 
+char	*create_map()
+{
+	char *map;
+	
+	map = (char *)malloc(sizeof(char) * );
+	
+	return (map);
 }
 */
-
 void	solve(char **str)
 {
 	int i;
 	int boardsize;
+	uint16_t pieces[26];
 
 	i = 0;
 	while(str[i])
 		++i;
 	boardsize = frt(4*i);
-	printf("\nboardsize is %i\n", boardsize);
+	i = 0;
+	while (str[i])
+	{
+		pieces[i] = convert_to_binary(str[i]);
+		++i;
+	}
+
 /*	while (boardsize <= 10)
 	{
-		recursive_solve(create_map(boardsize), );
+		if (recursive_solve(create_map(boardsize), ) == 0)
+			break;
 	} */
 }
 
@@ -187,6 +226,7 @@ int	valid_input(int fd, char **str)
 		while (check_col1(str[i]))
 			ft_strrevolve(str[i], 5, 4);
 		ft_putstr(str[i]);
+		convert_to_binary(str[i]);
 		++i;
 	}
 	str[i] = NULL;
