@@ -38,6 +38,21 @@ uint16_t	convert_to_binary(char *str)
 	return (number);
 }
 
+void	print_binary(uint16_t row, int boardsize)
+{
+        int bit;
+        int i;
+
+        bit = 32768;
+        i = 0;
+        while (bit && i < boardsize)
+        {
+		ft_putchar('0' + ((bit & row) && 1));
+		bit >>= 1;
+		++i;
+        }
+}
+
 int	frt(int x)
 { 
 	if (x == 0 || x == 1) 
@@ -52,45 +67,85 @@ int	frt(int x)
 	return (i - 1);
 }
 
-/*
-int	recursive_solve(char **map, )
+void	print_board(uint16_t *board, int boardsize)
 {
+	int row;
 
-
-	return (0);
+	row = 0;
+	while (row < boardsize)
+	{
+		print_binary(board[row++], boardsize);
+		write(1, "\n", 1);
+	}
+	printf("That was the board boardsize of %i\n", boardsize);
 }
-
-char	*create_map()
+/*
+void	move_piece(uint16_t *board, int boardsize, uint16_t pieces)
 {
-	char *map;
 	
-	map = (char *)malloc(sizeof(char) * );
 	
-	return (map);
 }
 */
+
+int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
+{
+	int row;
+	int column;
+
+	row = 0;
+	if (!pieces->tertimino)
+	{
+		print_board(board, boardsize);
+		return (1);
+	}
+
+	while (row < boardsize)
+	{
+		pieces->y = row;
+		column = 0;
+		while (column < boardsize)
+		{
+			pieces->x = column;
+			if (check_piece(board, boardsize, pieces))
+			{
+                		//move_piece(board, boardsize, pieces);
+                		if (r_solve(boardsize, pieces + 1, board))
+					return (1);
+                		//move_piece(board, boardsize, pieces);
+			}
+			++column;
+		}
+		++row;
+	}
+	return (1);
+}
+
 void	solve(char **str)
 {
-	int i;
-	int boardsize;
-	uint16_t pieces[26];
+	int 		i;
+	int 		boardsize;
+	t_mino		pieces[26];
+	uint16_t	board[11] = {0};
+	char		alpha_id;
 
+	alpha_id = 'A';
 	i = 0;
 	while(str[i])
 		++i;
 	boardsize = frt(4*i);
-	i = 0;
-	while (str[i])
-	{
-		pieces[i] = convert_to_binary(str[i]);
-		++i;
+	i = -1;
+	while (str[++i])
+	{	
+		pieces[i].tertimino = convert_to_binary(str[i]);
+		pieces[i].x = 0;
+		pieces[i].y = 0;
+		pieces[i].id = alpha_id++;
 	}
-
-/*	while (boardsize <= 10)
+	while (boardsize <= 10)
 	{
-		if (recursive_solve(create_map(boardsize), ) == 0)
+		if (r_solve(boardsize, pieces, board) == 1)
 			break;
-	} */
+	}
 }
 
 void	ft_strshift(char *str, unsigned int n)
