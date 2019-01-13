@@ -40,17 +40,17 @@ uint16_t	convert_to_binary(char *str)
 
 void	print_binary(uint16_t row, int boardsize)
 {
-        int bit;
-        int i;
+	int bit;
+	int i;
 
-        bit = 32768;
-        i = 0;
-        while (bit && i < boardsize)
+	bit = 32768;
+	i = 0;
+	while (bit && i < boardsize)
         {
 		ft_putchar('0' + ((bit & row) && 1));
 		bit >>= 1;
 		++i;
-        }
+	}
 }
 
 int	frt(int x)
@@ -79,43 +79,65 @@ void	print_board(uint16_t *board, int boardsize)
 	}
 	printf("That was the board boardsize of %i\n", boardsize);
 }
+
 /*
 void	move_piece(uint16_t *board, int boardsize, uint16_t pieces)
-{
-	
+{	
 	
 }
 */
 
+void	place_piece(int boardsize, t_mino *pieces, uint16_t *board)
+{
+	
+	
+}
+
+int	piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
+{
+	int 		row;
+	uint16_t 	mask;
+
+	row = pieces->y;
+	while (row < boardsize)
+	{
+		mask = 65535;
+		mask >>= (16 - boardsize);
+		mask <<= ((16 - boardsize) - boardsize*row);
+		if (((pieces->tertimino & mask) >> pieces->x) == (((pieces->tertimino >> pieces->x) << pieces->x) & mask))
+		{
+			if (board[row] & ((pieces->tertimino & mask) >> pieces->x))
+				return (0);
+		}
+		else
+			return (0);
+		++row;
+	}
+	return (1);
+}
+
 int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 {
-	int row;
-	int column;
-
-	row = 0;
 	if (!pieces->tertimino)
 	{
 		print_board(board, boardsize);
 		return (1);
 	}
-
-	while (row < boardsize)
+	while (pieces->y < boardsize)
 	{
-		pieces->y = row;
-		column = 0;
-		while (column < boardsize)
+		pieces->x = 0;
+		while (pieces->x < boardsize)
 		{
-			pieces->x = column;
-			if (check_piece(board, boardsize, pieces))
+			if (piece_fit(board, boardsize, pieces))
 			{
-                		//move_piece(board, boardsize, pieces);
+                		place_piece(boardsize, pieces, board);
                 		if (r_solve(boardsize, pieces + 1, board))
 					return (1);
                 		//move_piece(board, boardsize, pieces);
 			}
-			++column;
+			pieces->x++;
 		}
-		++row;
+		pieces->y++;
 	}
 	return (1);
 }
@@ -124,7 +146,7 @@ void	solve(char **str)
 {
 	int 		i;
 	int 		boardsize;
-	t_mino		pieces[26];
+	t_mino		pieces[27];
 	uint16_t	board[11] = {0};
 	char		alpha_id;
 
@@ -135,12 +157,13 @@ void	solve(char **str)
 	boardsize = frt(4*i);
 	i = -1;
 	while (str[++i])
-	{	
+	{
 		pieces[i].tertimino = convert_to_binary(str[i]);
 		pieces[i].x = 0;
 		pieces[i].y = 0;
 		pieces[i].id = alpha_id++;
 	}
+	ft_bzero(&pieces[i], sizeof(pieces[i]));
 	while (boardsize <= 10)
 	{
 		if (r_solve(boardsize, pieces, board) == 1)
@@ -214,7 +237,7 @@ int	check_shape(char *str)
 
 	i = 0;
 	touch = 0;
-	while (i < 22)
+	while (str[i] && i < 22)
 	{
 		if (str[i] == '#')
 		{
@@ -280,7 +303,6 @@ int	valid_input(int fd, char **str)
 			ft_strshift(str[i], 5);
 		while (check_col1(str[i]))
 			ft_strrevolve(str[i], 5, 4);
-		ft_putstr(str[i]);
 		convert_to_binary(str[i]);
 		++i;
 	}
@@ -293,7 +315,7 @@ int		main(int argc, char **argv)
 	int 	fd;
 	char 	**stored_array;
 
-	if (!(stored_array = (char **)malloc(sizeof(char *) * 26)))
+	if (!(stored_array = (char **)ft_memalloc(sizeof(char *) * 26)))
 		return (1);
 	if (argc != 2)
 	{
@@ -301,7 +323,7 @@ int		main(int argc, char **argv)
 		return (1);
 	}
 	if ((fd = open(argv[1], O_RDONLY)) < 0)
-			return (1);
+		return (1);
 	if (valid_input(fd, stored_array) == 1)
 	{
 		ft_putstr("error");
