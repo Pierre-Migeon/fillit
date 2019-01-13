@@ -6,7 +6,7 @@
 /*   By: pmigeon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/03 17:10:42 by pmigeon           #+#    #+#             */
-/*   Updated: 2019/01/02 14:15:47 by pmigeon          ###   ########.fr       */
+/*   Updated: 2019/01/13 13:53:23 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,15 +82,33 @@ void	print_board(uint16_t *board, int boardsize)
 
 /*
 void	move_piece(uint16_t *board, int boardsize, uint16_t pieces)
-{	
+{
 	
 }
 */
 
-void	place_piece(int boardsize, t_mino *pieces, uint16_t *board)
+uint16_t	genmask(int boardsize, int row)
 {
-	
-	
+	uint16_t mask;
+
+	mask = 65535;
+	mask >>= (16 - boardsize);
+	mask <<= ((16 - boardsize) - boardsize*row);
+	return (mask);
+}
+
+void	place_piece(uint16_t *board, int boardsize, t_mino *pieces)
+{
+	int			row;
+	uint16_t	mask;
+
+	row = pieces->y;
+	while (row < boardsize)
+	{
+		mask = genmask(boardsize, row);
+		board[row] |= ((pieces->tertimino & mask) >> pieces->x);
+		++row;
+	}
 }
 
 int	piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
@@ -101,9 +119,7 @@ int	piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
 	row = pieces->y;
 	while (row < boardsize)
 	{
-		mask = 65535;
-		mask >>= (16 - boardsize);
-		mask <<= ((16 - boardsize) - boardsize*row);
+		mask = genmask(boardsize, row);
 		if (((pieces->tertimino & mask) >> pieces->x) == (((pieces->tertimino >> pieces->x) << pieces->x) & mask))
 		{
 			if (board[row] & ((pieces->tertimino & mask) >> pieces->x))
@@ -130,10 +146,11 @@ int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 		{
 			if (piece_fit(board, boardsize, pieces))
 			{
-                		place_piece(boardsize, pieces, board);
-                		if (r_solve(boardsize, pieces + 1, board))
+				place_piece(board, boardsize, pieces);
+				print_board(board, boardsize);
+				if (r_solve(boardsize, pieces + 1, board))
 					return (1);
-                		//move_piece(board, boardsize, pieces);
+				//move_piece(board, boardsize, pieces);
 			}
 			pieces->x++;
 		}
@@ -163,7 +180,7 @@ void	solve(char **str)
 		pieces[i].y = 0;
 		pieces[i].id = alpha_id++;
 	}
-	ft_bzero(&pieces[i], sizeof(pieces[i]));
+	pieces[i].tertimino = 0;
 	while (boardsize <= 10)
 	{
 		if (r_solve(boardsize, pieces, board) == 1)
@@ -189,7 +206,7 @@ void	ft_strshift(char *str, unsigned int n)
 
 int	check_row1(char *str)
 {
-	int i; 
+	int i;
 
 	i = 0;
 	while (i < 4)
