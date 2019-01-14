@@ -83,17 +83,16 @@ void	print_board(uint16_t *board, int boardsize)
 /*
 void	move_piece(uint16_t *board, int boardsize, uint16_t pieces)
 {
-	
 }
 */
 
-uint16_t	genmask(int boardsize, int row)
+uint16_t	genmask(int row)
 {
 	uint16_t mask;
 
 	mask = 65535;
-	mask >>= (16 - boardsize);
-	mask <<= ((16 - boardsize) - boardsize*row);
+	mask >>= (16 - 4);
+	mask <<= ((16 - 4) - 4*row);
 	return (mask);
 }
 
@@ -105,8 +104,8 @@ void	place_piece(uint16_t *board, int boardsize, t_mino *pieces)
 	row = pieces->y;
 	while (row < boardsize)
 	{
-		mask = genmask(boardsize, row);
-		board[row] |= ((pieces->tertimino & mask) >> pieces->x);
+		mask = genmask(row);
+		board[row] |= (((pieces->tertimino & mask) >> pieces->x) << 4*row);
 		++row;
 	}
 }
@@ -119,10 +118,10 @@ int	piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
 	row = pieces->y;
 	while (row < boardsize)
 	{
-		mask = genmask(boardsize, row);
+		mask = genmask(row);
 		if (((pieces->tertimino & mask) >> pieces->x) == (((pieces->tertimino >> pieces->x) << pieces->x) & mask))
 		{
-			if (board[row] & ((pieces->tertimino & mask) >> pieces->x))
+			if (board[row] & ((((pieces->tertimino & mask)) >> pieces->x) << 4*row))
 				return (0);
 		}
 		else
