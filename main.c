@@ -6,7 +6,7 @@
 /*   By: pmigeon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/03 17:10:42 by pmigeon           #+#    #+#             */
-/*   Updated: 2019/01/13 17:39:28 by pmigeon          ###   ########.fr       */
+/*   Updated: 2019/01/15 16:27:17 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,15 +96,22 @@ uint16_t	genmask(int row, int on, int boardsize)
 	return (mask);
 }
 
+void	retract_piece(uint16_t *board, int boardsize, t_mino *pieces)
+{
+
+
+
+}
+
 void	place_piece(uint16_t *board, int boardsize, t_mino *pieces)
 {
-	int		row;
-	int		prow;
+	int			row;
+	int			prow;
 	uint16_t	mask;
 
 	row = pieces->y;
 	prow = 0;
-	while (board[row] && prow < 4)
+	while (row < boardsize && prow < 4)
 	{
 		mask = genmask(row, 1, boardsize);
 		board[row] |= (((pieces->tertimino & mask) >> pieces->x) << 4*prow);
@@ -116,18 +123,19 @@ void	place_piece(uint16_t *board, int boardsize, t_mino *pieces)
 int	piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
 {
 	int 		row;
-	int		prow;
-	uint16_t 	mask;
+	int			prow;
+	uint16_t 	pmask;
+	uint16_t	rowmask;
 
 	row = pieces->y;
 	prow = 0;
-	while (board[row] && prow < 4)
+	while (row < boardsize && prow < 4)
 	{
-		mask = genmask(prow, 1, boardsize);
-		if (board[row] & ((((pieces->tertimino & mask)) >> pieces->x) << 4*prow))
+		pmask = genmask(prow, 1, boardsize);
+		if (board[row] & ((((pieces->tertimino & pmask)) >> pieces->x) << 4*prow))
 			return (0);
-		mask = genmask(0, 0, boardsize);
-		if ((board[row] & mask) & ((((pieces->tertimino & mask)) >> pieces->x) << 4*prow))
+		rowmask = genmask(0, 0, boardsize);
+		if ((board[row] | ((((pieces->tertimino & pmask)) >> pieces->x) << 4*prow)) & rowmask)
 			return (0);
 		++prow;
 		++row;
@@ -155,13 +163,13 @@ int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 				print_board(board, boardsize);
 				if (r_solve(boardsize, pieces + 1, board))
 					return (1);
-				//move_piece(board, boardsize, pieces);
+				retract_piece(board, boardsize, pieces);
 			}
 			pieces->x++;
 		}
 		pieces->y++;
 	}
-	return (1);
+	return (0);
 }
 
 void	solve(char **str)
@@ -190,6 +198,7 @@ void	solve(char **str)
 	{
 		if (r_solve(boardsize, pieces, board) == 1)
 			break;
+		++boardsize;
 	}
 }
 
