@@ -6,7 +6,7 @@
 /*   By: pmigeon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/03 17:10:42 by pmigeon           #+#    #+#             */
-/*   Updated: 2019/01/15 16:27:17 by pmigeon          ###   ########.fr       */
+/*   Updated: 2019/01/17 19:03:32 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,23 +19,41 @@
 uint16_t	convert_to_binary(char *str)
 {
 	uint16_t number;
-        int bit;
-        int i;
+	int bit;
+	int i;
 
-        bit = 32768;
-        i = 0;
+	bit = 32768;
+	i = 0;
 	number = 0;
-        while (bit && str[i])
-        {
-                if (str[i] != '\n')
-                {
-                        if (str[i] == '#')
-                                number |= bit;
-                        bit >>= 1;
-                }
-                i++;
-        }
+	while (bit && str[i])
+	{
+		if (str[i] != '\n')
+		{
+			if (str[i] == '#')
+				number |= bit;
+			bit >>= 1;
+    	}
+		i++;
+	}
 	return (number);
+}
+
+char	*convert_to_string(int boardsize, t_mino *pieces, uint16_t *board)
+{
+	char *out;
+	int i;
+
+	i = 0;
+	out = ft_strnew(boardsize*(boardsize + 1));
+	while (pieces[i].tertimino)
+	{
+		if ()
+			out[pieces[i].x * pieces[i].y] = pieces[i].id
+		else if (!ft_isalpha(out[i]))
+			out[i] = '.';
+		++i;
+	}
+	return (out);
 }
 
 void	print_binary(uint16_t row, int boardsize)
@@ -46,7 +64,7 @@ void	print_binary(uint16_t row, int boardsize)
 	bit = 32768;
 	i = 0;
 	while (bit && i < boardsize)
-        {
+	{
 		ft_putchar('0' + ((bit & row) && 1));
 		bit >>= 1;
 		++i;
@@ -79,21 +97,7 @@ void	print_board(uint16_t *board, int boardsize)
 	}
 	printf("That was the board boardsize of %i\n", boardsize);
 }
-
-/*
-void	stringify(uint16_t board[11])
-{
-	char *str;
-	int row;
-	int column;
-
-	row = 0;
-	column = 0;
-	{
-	}
-}
-*/
-
+ 
 uint16_t	genmask(int row, int on, int boardsize)
 {
 	uint16_t mask;
@@ -108,7 +112,7 @@ void	play_piece(uint16_t *board, int boardsize, t_mino *pieces, int toggle)
 {
 	int			row;
 	int			prow;
-	uint16_t		mask;
+	uint16_t	mask;
 
 	row = pieces->y;
 	prow = 0;
@@ -124,10 +128,10 @@ void	play_piece(uint16_t *board, int boardsize, t_mino *pieces, int toggle)
 	}
 }
 
-int	piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
+int		piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
 {
 	int 		row;
-	int		prow;
+	int			prow;
 	uint16_t 	pmask;
 	uint16_t	rowmask;
 
@@ -139,10 +143,10 @@ int	piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
 		if (row == boardsize)
 			if (((((pieces->tertimino & pmask)) >> pieces->x) << 4*prow))
 				return (0);
-		if (board[row] & ((((pieces->tertimino & pmask)) >> pieces->x) << 4*prow))
+		if (board[row] & ((((pieces->tertimino & pmask)) << 4*prow) >> pieces->x))
 			return (0);
 		rowmask = genmask(0, 0, boardsize);
-		if ((board[row] | ((((pieces->tertimino & pmask)) >> pieces->x) << 4*prow)) & rowmask)
+		if ((board[row] | ((((pieces->tertimino & pmask)) << 4*prow) >> pieces->x)) & rowmask)
 			return (0);
 		++prow;
 		++row;
@@ -150,11 +154,22 @@ int	piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
 	return (1);
 }
 
+t_mino	*t_mino_rewinder(t_mino *pieces)
+{
+	pieces--;
+	while (pieces->tertimino)
+		pieces--;
+	pieces++;
+	return (pieces);
+}
+
 int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 {
 	if (!pieces->tertimino)
 	{
-		print_board(board, boardsize);
+		pieces = t_mino_rewinder(pieces);
+		ft_putstr(convert_to_string(boardsize, pieces, board));
+		//print_board(board, boardsize);
 		return (1);
 	}
 	while (pieces->y < boardsize)
@@ -165,7 +180,6 @@ int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 			if (piece_fit(board, boardsize, pieces))
 			{
 				play_piece(board, boardsize, pieces, 0);
-				//print_board(board, boardsize);
 				if (r_solve(boardsize, pieces + 1, board))
 					return (1);
 				play_piece(board, boardsize, pieces, 1);
