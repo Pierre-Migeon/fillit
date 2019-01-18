@@ -80,6 +80,20 @@ void	print_board(uint16_t *board, int boardsize)
 	printf("That was the board boardsize of %i\n", boardsize);
 }
 
+/*
+void	stringify(uint16_t board[11])
+{
+	char *str;
+	int row;
+	int column;
+
+	row = 0;
+	column = 0;
+	{
+	}
+}
+*/
+
 uint16_t	genmask(int row, int on, int boardsize)
 {
 	uint16_t mask;
@@ -100,11 +114,11 @@ void	play_piece(uint16_t *board, int boardsize, t_mino *pieces, int toggle)
 	prow = 0;
 	while (row < boardsize && prow < 4)
 	{
-		mask = genmask(row, 1, boardsize);
+		mask = genmask(prow, 1, boardsize);
 		if (toggle == 0)
-			board[row] |= (((pieces->tertimino & mask) >> pieces->x) << 4*prow);
+			board[row] |= (((pieces->tertimino & mask) << 4*prow)  >> pieces->x);
 		else
-			board[row] ^= (((pieces->tertimino & mask) >> pieces->x) << 4*prow);
+			board[row] ^= (((pieces->tertimino & mask) << 4*prow)  >> pieces->x);
 		++prow;
 		++row;
 	}
@@ -151,7 +165,7 @@ int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 			if (piece_fit(board, boardsize, pieces))
 			{
 				play_piece(board, boardsize, pieces, 0);
-				print_board(board, boardsize);
+				//print_board(board, boardsize);
 				if (r_solve(boardsize, pieces + 1, board))
 					return (1);
 				play_piece(board, boardsize, pieces, 1);
@@ -169,8 +183,8 @@ void	solve(char **str)
 	int 		i;
 	int 		boardsize;
 	t_mino		pieces[27];
-	uint16_t	board[11] = {0};
 	char		alpha_id;
+	uint16_t	board[11] = {0};
 
 	alpha_id = 'A';
 	i = 0;
@@ -186,7 +200,6 @@ void	solve(char **str)
 		pieces[i].id = alpha_id++;
 	}
 	pieces[i].tertimino = 0;
-	boardsize = 5;
 	while (boardsize <= 10)
 	{
 		if (r_solve(boardsize, pieces, board) == 1)
@@ -336,8 +349,8 @@ int	valid_input(int fd, char **str)
 
 int		main(int argc, char **argv)
 {
-	int 	fd;
-	char 	**stored_array;
+	int 		fd;
+	char 		**stored_array;
 
 	if (!(stored_array = (char **)ft_memalloc(sizeof(char *) * 26)))
 		return (1);
