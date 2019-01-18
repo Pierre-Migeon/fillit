@@ -32,26 +32,52 @@ uint16_t	convert_to_binary(char *str)
 			if (str[i] == '#')
 				number |= bit;
 			bit >>= 1;
-    	}
+    		}
 		i++;
 	}
 	return (number);
 }
 
-char	*convert_to_string(int boardsize, t_mino *pieces, uint16_t *board)
+void	makedots(char *str, int length, int boardsize)
 {
-	char *out;
 	int i;
 
 	i = 0;
-	out = ft_strnew(boardsize*(boardsize + 1));
-	while (pieces[i].tertimino)
+	while (i < length)
 	{
-		if ()
-			out[pieces[i].x * pieces[i].y] = pieces[i].id
-		else if (!ft_isalpha(out[i]))
-			out[i] = '.';
+		str[i] = '.';
+		if (((i + 1) % (boardsize + 1) == 0))
+			str[i] = '\n';
 		++i;
+	}
+}
+
+char	*convert_to_string(int boardsize, t_mino *pieces)
+{
+	char		*out;
+	int		piece;
+	uint16_t	bit;
+	int 		i;
+	int		j;
+
+	piece = 0;
+	out = ft_strnew(boardsize*(boardsize + 1));
+	makedots(out, boardsize*(boardsize + 1), boardsize);
+	while (pieces[piece].tertimino)
+	{
+		i = 0;
+		j = 0;
+		bit = 32768;
+		while (bit)
+		{
+			if ( i > 0 && i % 4 == 0)
+				j += boardsize - 3;
+			if (bit & pieces[piece].tertimino)
+				out[j + i + pieces[piece].x + (pieces[piece].y * (boardsize + 1))] = pieces[piece].id;
+			++i;
+			bit >>= 1;
+		}
+		++piece;
 	}
 	return (out);
 }
@@ -168,8 +194,7 @@ int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 	if (!pieces->tertimino)
 	{
 		pieces = t_mino_rewinder(pieces);
-		ft_putstr(convert_to_string(boardsize, pieces, board));
-		//print_board(board, boardsize);
+		ft_putstr(convert_to_string(boardsize, pieces));
 		return (1);
 	}
 	while (pieces->y < boardsize)
