@@ -138,7 +138,7 @@ void	play_piece(uint16_t *board, int boardsize, t_mino *pieces, int toggle)
 {
 	int			row;
 	int			prow;
-	uint16_t	mask;
+	uint16_t		mask;
 
 	row = pieces->y;
 	prow = 0;
@@ -167,7 +167,7 @@ int		piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
 	{
 		pmask = genmask(prow, 1, boardsize);
 		if (row == boardsize)
-			if (((((pieces->tertimino & pmask)) >> pieces->x) << 4*prow))
+			if ((((pieces->tertimino & pmask)) << 4*prow) >> pieces->x)
 				return (0);
 		if (board[row] & ((((pieces->tertimino & pmask)) << 4*prow) >> pieces->x))
 			return (0);
@@ -193,8 +193,7 @@ int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 {
 	if (!pieces->tertimino)
 	{
-		pieces = t_mino_rewinder(pieces);
-		ft_putstr(convert_to_string(boardsize, pieces));
+		ft_putstr(convert_to_string(boardsize, t_mino_rewinder(pieces)));
 		return (1);
 	}
 	while (pieces->y < boardsize)
@@ -205,15 +204,19 @@ int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 			if (piece_fit(board, boardsize, pieces))
 			{
 				play_piece(board, boardsize, pieces, 0);
+				print_board(board, boardsize);
 				if (r_solve(boardsize, pieces + 1, board))
 					return (1);
 				play_piece(board, boardsize, pieces, 1);
+				if (pieces->tertimino == (pieces + 1)->cache)
+					return (0);
 			}
 			pieces->x++;
 		}
 		pieces->y++;
 	}
 	pieces->y = 0;
+	pieces->cache = pieces->tertimino;
 	return (0);
 }
 
@@ -239,7 +242,7 @@ void	solve(char **str)
 		pieces[i].id = alpha_id++;
 	}
 	pieces[i].tertimino = 0;
-	while (boardsize <= 10)
+	while (boardsize <= 15)
 	{
 		if (r_solve(boardsize, pieces, board) == 1)
 			break;

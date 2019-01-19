@@ -21,6 +21,7 @@ typedef			struct s_mino
 	char		id;
 	int		x;
 	int		y;
+	uint16_t	cache;
 }			t_mino;
 
 int	ft_squrt(int size);
