@@ -6,135 +6,13 @@
 /*   By: pmigeon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/03 17:10:42 by pmigeon           #+#    #+#             */
-/*   Updated: 2019/01/17 19:03:32 by pmigeon          ###   ########.fr       */
+/*   Updated: 2019/01/22 20:20:44 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
 #include "fillit.h"
-#include "./libft/libft.h"
-#include <fcntl.h>
-#include <stdio.h>
 
-uint16_t	convert_to_binary(char *str)
-{
-	uint16_t number;
-	int bit;
-	int i;
-
-	bit = 32768;
-	i = 0;
-	number = 0;
-	while (bit && str[i])
-	{
-		if (str[i] != '\n')
-		{
-			if (str[i] == '#')
-				number |= bit;
-			bit >>= 1;
-    		}
-		i++;
-	}
-	return (number);
-}
-
-void	makedots(char *str, int length, int boardsize)
-{
-	int i;
-
-	i = 0;
-	while (i < length)
-	{
-		str[i] = '.';
-		if (((i + 1) % (boardsize + 1) == 0))
-			str[i] = '\n';
-		++i;
-	}
-}
-
-char	*convert_to_string(int boardsize, t_mino *pieces)
-{
-	char		*out;
-	int		piece;
-	uint16_t	bit;
-	int 		i;
-	int		j;
-
-	piece = 0;
-	out = ft_strnew(boardsize*(boardsize + 1));
-	makedots(out, boardsize*(boardsize + 1), boardsize);
-	while (pieces[piece].tertimino)
-	{
-		i = 0;
-		j = 0;
-		bit = 32768;
-		while (bit)
-		{
-			if ( i > 0 && i % 4 == 0)
-				j += boardsize - 3;
-			if (bit & pieces[piece].tertimino)
-				out[j + i + pieces[piece].x + (pieces[piece].y * (boardsize + 1))] = pieces[piece].id;
-			++i;
-			bit >>= 1;
-		}
-		++piece;
-	}
-	return (out);
-}
-
-void	print_binary(uint16_t row, int boardsize)
-{
-	int bit;
-	int i;
-
-	bit = 32768;
-	i = 0;
-	while (bit && i < boardsize)
-	{
-		ft_putchar('0' + ((bit & row) && 1));
-		bit >>= 1;
-		++i;
-	}
-}
-
-int	frt(int x)
-{
-	if (x == 0 || x == 1) 
-		return x;  
-	int i = 1; 
-	int result = 1; 
-	while (result <= x) 
-	{
-		i++;
-		result = i * i;
-	}
-	return (i - 1);
-}
-
-void	print_board(uint16_t *board, int boardsize)
-{
-	int row;
-
-	row = 0;
-	while (row < boardsize)
-	{
-		print_binary(board[row++], boardsize);
-		write(1, "\n", 1);
-	}
-	printf("That was the board boardsize of %i\n", boardsize);
-}
- 
-uint16_t	genmask(int row, int on, int boardsize)
-{
-	uint16_t mask;
-
-	mask = 65535;
-	mask >>= (on) ? (16 - 4) : boardsize;
-	mask <<= (on) ? ((16 - 4) - 4*row) : 0;
-	return (mask);
-}
-
-void	play_piece(uint16_t *board, int boardsize, t_mino *pieces, int toggle)
+void	play_piece(uint16_t *board, int boardsize, t_mino *pieces)
 {
 	int			row;
 	int			prow;
@@ -145,10 +23,7 @@ void	play_piece(uint16_t *board, int boardsize, t_mino *pieces, int toggle)
 	while (row < boardsize && prow < 4)
 	{
 		mask = genmask(prow, 1, boardsize);
-		if (toggle == 0)
-			board[row] |= (((pieces->tertimino & mask) << 4*prow)  >> pieces->x);
-		else
-			board[row] ^= (((pieces->tertimino & mask) << 4*prow)  >> pieces->x);
+		board[row] ^= (((pieces->tertimino & mask) << 4*prow)  >> pieces->x);
 		++prow;
 		++row;
 	}
@@ -180,20 +55,18 @@ int		piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
 	return (1);
 }
 
-t_mino	*t_mino_rewinder(t_mino *pieces)
+
+int		retfunc(uint16_t *board, int boardsize, t_mino *pieces)
 {
-	pieces--;
-	while (pieces->tertimino)
-		pieces--;
-	pieces++;
-	return (pieces);
+	play_piece(board, boardsize, pieces);
+	return (1);
 }
 
 int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 {
 	if (!pieces->tertimino)
 	{
-		ft_putstr(convert_to_string(boardsize, t_mino_rewinder(pieces)));
+		//ft_putstr(convert_to_string(boardsize, t_mino_rewinder(pieces - 1)));
 		return (1);
 	}
 	while (pieces->y < boardsize)
@@ -203,12 +76,12 @@ int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 		{
 			if (piece_fit(board, boardsize, pieces))
 			{
-				play_piece(board, boardsize, pieces, 0);
+				play_piece(board, boardsize, pieces);
 				print_board(board, boardsize);
 				if (r_solve(boardsize, pieces + 1, board))
-					return (1);
-				play_piece(board, boardsize, pieces, 1);
-				if (pieces->tertimino == (pieces + 1)->cache)
+					return (1); //retfunc(board, boardsize, pieces));
+				play_piece(board, boardsize, pieces);
+				if (pieces->tertimino == (pieces + 1)->cache && ((pieces + 1)->x == boardsize - 1) && ((pieces + 1)->y == boardsize - 1))
 					return (0);
 			}
 			pieces->x++;
@@ -220,173 +93,79 @@ int	r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 	return (0);
 }
 
+int	edge_check(int boardsize, uint16_t board[16])
+{
+	int i;
+
+	i = boardsize - 1;
+	if (board[i] != 0)
+		return (0);
+	while (i >= 0)
+	{
+		if (((board[i] & ((uint16_t)1 << (16 - boardsize))) && 1) != 0)
+			return (0);
+		--i;
+	}
+	return (1);
+}
+
+void	clear_board(uint16_t board[16])
+{
+	int i;
+
+	i = 0;
+	while (i < 16)
+	{
+		board[i] = 0;
+		i++;
+	}
+}
+
 void	solve(char **str)
 {
 	int 		i;
-	int 		boardsize;
+	int 		boardsize[2];
 	t_mino		pieces[27];
 	char		alpha_id;
-	uint16_t	board[11] = {0};
+	uint16_t	board[16] = {0};
 
 	alpha_id = 'A';
 	i = 0;
 	while(str[i])
 		++i;
-	boardsize = frt(4*i);
-	i = -1;
-	while (str[++i])
+	boardsize[0] = frt(4*i);
+	boardsize[1] = 16;
+	pieces[i].tertimino = 0;
+	while (--i >= 0)
 	{
 		pieces[i].tertimino = convert_to_binary(str[i]);
 		pieces[i].x = 0;
 		pieces[i].y = 0;
-		pieces[i].id = alpha_id++;
+		pieces[i].id = alpha_id + i;
 	}
-	pieces[i].tertimino = 0;
-	while (boardsize <= 15)
+	while (boardsize[1] >= boardsize[0])
 	{
-		if (r_solve(boardsize, pieces, board) == 1)
-			break;
-		++boardsize;
-	}
-}
-
-void	ft_strshift(char *str, unsigned int n)
-{
-	char	*buf;
-	int		len;
-
-	if (!str)
-		return ;
-	len = ft_strlen(str);
-	if ((n %= len) == 0 || !(buf = ft_strnew(len)))
-		return ;
-	ft_memcpy(buf, str + n, len - n);
-	ft_memcpy(buf + len - n, str, n);
-	ft_memcpy(str, buf, len);
-	ft_strdel(&buf);
-}
-
-int	check_row1(char *str)
-{
-	int i;
-
-	i = 0;
-	while (i < 4)
-	{
-		if (str[i] == '#')
-			return (0);
-		++i;
-	}
-	return (1);
-}
-
-int	check_col1(char *str)
-{
-	int i;
-
-	i = 0;
-	while (i <= 15)
-	{
-		if (str[i] == '#')
-			return (0);
-		i += 5;
-	}
-	return (1);
-}
-
-void	ft_strrevolve(char *str, unsigned int wide, unsigned int tall)
-{
-	unsigned int	row;
-	unsigned int	w;
-
-	row = -1;
-	while (++row < tall)
-	{
-		w = -1;
-		while (++w < wide - 2)
-			str[row * wide + w] = str[row * wide + w + 1];
-		str[row * wide + w] = '.';
-	}
-}
-
-int	check_shape(char *str)
-{
-	int i;
-	int touch;
-
-	i = 0;
-	touch = 0;
-	while (str[i] && i < 22)
-	{
-		if (str[i] == '#')
+		if (r_solve(boardsize[1], pieces, board) == 1)
 		{
-			if (i % 5 < 3)
-				if (str[i + 1] == '#')
-					++touch;
-			if ( i % 5 > 0)
-				if (str[i - 1] == '#')
-					++touch;
-			if (i / 5 < 3)
-				if (str[i + 5] == '#')
-					++touch;
-			if (i / 5 > 0)
-				 if (str[i - 5] == '#')
-					++touch;
+			if (edge_check(boardsize[1], board))
+			{
+				clear_board(board);
+				boardsize[1]--;
+			}
+			else
+			{	
+				ft_putstr(convert_to_string(boardsize[1], pieces));
+				break;
+			}
 		}
-		++i;
+		else
+		{
+			clear_board(board);
+			r_solve(++boardsize[1], pieces, board);
+			ft_putstr(convert_to_string(boardsize[1], pieces));
+			break;
+		}
 	}
-	return (touch == 6 || touch == 8);
-}
-
-int	check_piece(char *str)
-{
-	int hash;
-	int dots;
-	int i;
-
-	hash = 0;
-	i = 0;
-	dots = 0;
-	while (str[i])
-	{
-		if (i == 4 || i == 9 || i == 14 || i == 19)
-			if (str[i] != '\n')
-				return (1);
-		if (str[i] != '#' && str[i] != '.' && str[i] != '\n')
-			return (1);
-		if (str[i] == '#')
-			++hash;
-		if (str[i] == '.')
-			++dots;
-		++i;
-	}
-	if (hash != 4 || i != 20 || dots != 12)
- 		return (1);
-	return (0);
-}
-
-int	valid_input(int fd, char **str)
-{
-	char 	buf[22];
-	int 	bits_read;
-	int 	i;
-
-	i = 0;
-	while ((bits_read = read(fd, buf, 21)) > 19 && i < 26) 
-	{
-		buf[20] = '\0';
-		str[i] = ft_strdup(buf);
-		if (check_piece(str[i]) == 1 || check_shape(str[i]) == 0)
-			return (1);
-		while (check_row1(str[i]))
-			ft_strshift(str[i], 5);
-		while (check_col1(str[i]))
-			ft_strrevolve(str[i], 5, 4);
-		convert_to_binary(str[i]);
-		++i;
-	}
-	str[i] = NULL;
-	return (0);
 }
 
 int		main(int argc, char **argv)
