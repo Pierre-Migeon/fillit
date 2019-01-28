@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   diverse_functions.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ghdesfos <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pmigeon  <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/22 10:48:07 by ghdesfos          #+#    #+#             */
-/*   Updated: 2019/01/22 17:11:47 by pmigeon          ###   ########.fr       */
+/*   Updated: 2019/01/28 14:26:58 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fillit.h"
+#include "../includes/fillit.h"
 
-void	makedots(char *str, int length, int boardsize)
+void		makedots(char *str, int length, int boardsize)
 {
 	int i;
 
@@ -26,12 +26,15 @@ void	makedots(char *str, int length, int boardsize)
 	}
 }
 
-int	frt(int x)
+int			frt(int x)
 {
+	int i;
+	int result;
+
+	i = 1;
+	result = 1;
 	if (x == 0 || x == 1)
-		return x;
-	int i = 1;
-	int result = 1;
+		return (x);
 	while (result <= x)
 	{
 		i++;
@@ -46,11 +49,11 @@ uint16_t	genmask(int row, int on, int boardsize)
 
 	mask = 65535;
 	mask >>= (on) ? (16 - 4) : boardsize;
-	mask <<= (on) ? ((16 - 4) - 4*row) : 0;
+	mask <<= (on) ? ((16 - 4) - 4 * row) : 0;
 	return (mask);
 }
 
-t_mino	*t_mino_rewinder(t_mino *pieces)
+t_mino		*t_mino_rewinder(t_mino *pieces)
 {
 	while (pieces->id > 'A')
 		pieces--;

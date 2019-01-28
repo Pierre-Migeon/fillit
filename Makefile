@@ -6,19 +6,20 @@
 #    By: ghdesfos <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/01/22 15:01:58 by ghdesfos          #+#    #+#              #
-#    Updated: 2019/01/22 16:15:43 by pmigeon          ###   ########.fr        #
+#    Updated: 2019/01/28 14:11:58 by pmigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fillit
-SRC = check_input.c\
-		conversion_functions.c\
-		diverse_functions.c\
-		main.c\
-		print.c\
-		shift_input_to_right_position.c
+SRC = ./src/check_input.c\
+		./src/conversion_functions.c\
+		./src/diverse_functions.c\
+		./src/diverse_functions_2.c\
+		./src/main.c\
+		./src/print.c\
+		./src/shift_input_to_right_position.c
 OBJ = $(SRC:.c=.o)
-FLAGS =-g -Wall -Wextra -Werror
+FLAGS =-Wall -Wextra -Werror
 LIBFT_FOL = libft
 LIBFT_NAME = ft
 HEAD_FOL = .

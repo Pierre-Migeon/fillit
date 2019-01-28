@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   print.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ghdesfos <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pmigeon  <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/22 10:37:44 by ghdesfos          #+#    #+#             */
-/*   Updated: 2019/01/22 15:31:19 by ghdesfos         ###   ########.fr       */
+/*   Updated: 2019/01/28 14:27:54 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fillit.h"
+#include "../includes/fillit.h"
 
 void	print_binary(uint16_t row, int boardsize)
 {
@@ -25,17 +25,4 @@ void	print_binary(uint16_t row, int boardsize)
 		bit >>= 1;
 		++i;
 	}
-}
-
-void	print_board(uint16_t *board, int boardsize)
-{
-	int row;
-
-	row = 0;
-	while (row < boardsize)
-	{
-		print_binary(board[row++], boardsize);
-		write(1, "\n", 1);
-	}
-	printf("That was the board boardsize of %i\n", boardsize);
 }

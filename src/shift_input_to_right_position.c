@@ -6,11 +6,11 @@
 /*   By: ghdesfos <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/22 10:38:56 by ghdesfos          #+#    #+#             */
-/*   Updated: 2019/01/22 15:31:29 by ghdesfos         ###   ########.fr       */
+/*   Updated: 2019/01/25 18:23:40 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fillit.h"
+#include "../includes/fillit.h"
 
 void	ft_strshift(char *str, unsigned int n)
 {
@@ -28,7 +28,7 @@ void	ft_strshift(char *str, unsigned int n)
 	ft_strdel(&buf);
 }
 
-int	check_row1(char *str)
+int		check_row1(char *str)
 {
 	int i;
 
@@ -42,7 +42,7 @@ int	check_row1(char *str)
 	return (1);
 }
 
-int	check_col1(char *str)
+int		check_col1(char *str)
 {
 	int i;
 

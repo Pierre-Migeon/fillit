@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   conversion_functions.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ghdesfos <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pmigeon  <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/22 10:46:31 by ghdesfos          #+#    #+#             */
-/*   Updated: 2019/01/22 17:22:43 by pmigeon          ###   ########.fr       */
+/*   Updated: 2019/01/28 14:26:37 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fillit.h"
+#include "../includes/fillit.h"
 
 uint16_t	convert_to_binary(char *str)
 {
-	uint16_t number;
-	int bit;
-	int i;
+	uint16_t	number;
+	int			bit;
+	int			i;
 
 	bit = 32768;
 	i = 0;
@@ -28,35 +28,34 @@ uint16_t	convert_to_binary(char *str)
 			if (str[i] == '#')
 				number |= bit;
 			bit >>= 1;
-    		}
+		}
 		i++;
 	}
 	return (number);
 }
 
-char	*convert_to_string(int boardsize, t_mino *pieces)
+char		*convert_to_string(int boardsize, t_mino *pieces)
 {
 	char		*out;
-	int		piece;
+	int			piece;
 	uint16_t	bit;
-	int 		i;
-	int		j;
+	int			i;
+	int			j;
 
 	piece = 0;
-	out = ft_strnew(boardsize*(boardsize + 1));
-	makedots(out, boardsize*(boardsize + 1), boardsize);
-	while (pieces[piece].tertimino)
+	out = ft_strnew(boardsize * (boardsize + 1));
+	makedots(out, boardsize * (boardsize + 1), boardsize);
+	while (pieces[piece].tertimino && (i = -1) == -1)
 	{
-		i = 0;
 		j = 0;
 		bit = 32768;
-		while (bit)
+		while (bit && ++i > -1)
 		{
-			if ( i > 0 && i % 4 == 0)
+			if (i > 0 && i % 4 == 0)
 				j += boardsize - 3;
 			if (bit & pieces[piece].tertimino)
-				out[j + i + pieces[piece].x + (pieces[piece].y * (boardsize + 1))] = pieces[piece].id;
-			++i;
+				out[j + i + pieces[piece].x \
+					+ (pieces[piece].y * (boardsize + 1))] = pieces[piece].id;
 			bit >>= 1;
 		}
 		++piece;
