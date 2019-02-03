@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   diverse_functions.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmigeon  <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ghdesfos <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/22 10:48:07 by ghdesfos          #+#    #+#             */
-/*   Updated: 2019/01/28 14:26:58 by pmigeon          ###   ########.fr       */
+/*   Updated: 2019/02/02 16:26:44 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,4 @@ uint16_t	genmask(int row, int on, int boardsize)
 	mask >>= (on) ? (16 - 4) : boardsize;
 	mask <<= (on) ? ((16 - 4) - 4 * row) : 0;
 	return (mask);
-}
-
-t_mino		*t_mino_rewinder(t_mino *pieces)
-{
-	while (pieces->id > 'A')
-		pieces--;
-	return (pieces);
 }

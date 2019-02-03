@@ -6,7 +6,7 @@
 /*   By: pmigeon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/25 18:24:48 by pmigeon           #+#    #+#             */
-/*   Updated: 2019/01/28 14:27:11 by pmigeon          ###   ########.fr       */
+/*   Updated: 2019/02/02 16:27:01 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ t_mino	*findlast(t_mino pieces[27], int i)
 	j = i - 1;
 	while (j >= 0)
 	{
-		if (pieces[j].tertimino == pieces[i].tertimino)
+		if (pieces[j].tetromino == pieces[i].tetromino)
 			return (&pieces[j]);
 		--j;
 	}
@@ -56,18 +56,18 @@ t_mino	*piece_gen(char **str, t_mino pieces[27])
 	while (str[i])
 		++i;
 	boardsize[0] = frt(4 * i);
-	boardsize[1] = 16;
+	boardsize[1] = MAXBOARDSIZE;
 	i = -1;
 	while (str[++i])
 	{
-		pieces[i].tertimino = convert_to_binary(str[i]);
+		pieces[i].tetromino = convert_to_binary(str[i]);
 		pieces[i].x = 0;
 		pieces[i].y = 0;
 		pieces[i].id = alpha_id++;
 		pieces[i].last = findlast(pieces, i);
 		free(str[i]);
 	}
-	pieces[i].tertimino = 0;
+	pieces[i].tetromino = 0;
 	pieces[0].boardsize[0] = boardsize[0];
 	pieces[0].boardsize[1] = boardsize[1];
 	return (pieces);

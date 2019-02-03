@@ -6,7 +6,7 @@
 #    By: ghdesfos <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/01/22 15:01:58 by ghdesfos          #+#    #+#              #
-#    Updated: 2019/01/28 14:11:58 by pmigeon          ###   ########.fr        #
+#    Updated: 2019/02/02 16:31:24 by pmigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ SRC = ./src/check_input.c\
 		./src/conversion_functions.c\
 		./src/diverse_functions.c\
 		./src/diverse_functions_2.c\
+		./src/diverse_functions_3.c\
 		./src/main.c\
 		./src/print.c\
 		./src/shift_input_to_right_position.c

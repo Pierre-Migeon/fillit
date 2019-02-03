@@ -6,7 +6,7 @@
 /*   By: pmigeon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/03 17:10:42 by pmigeon           #+#    #+#             */
-/*   Updated: 2019/01/28 14:27:19 by pmigeon          ###   ########.fr       */
+/*   Updated: 2019/02/02 16:29:59 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	play_piece(uint16_t *board, int boardsize, t_mino *pieces)
 	while (row < boardsize && prow < 4)
 	{
 		mask = genmask(prow, 1, boardsize);
-		board[row] ^= (((pieces->tertimino & mask) << 4 * prow) >> pieces->x);
+		board[row] ^= (((pieces->tetromino & mask) << 4 * prow) >> pieces->x);
 		++prow;
 		++row;
 	}
@@ -42,13 +42,13 @@ int		piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
 	{
 		pmask = genmask(prow, 1, boardsize);
 		if (row == boardsize)
-			if ((((pieces->tertimino & pmask)) << 4 * prow) >> pieces->x)
+			if ((((pieces->tetromino & pmask)) << 4 * prow) >> pieces->x)
 				return (retfunc(pieces, boardsize));
-		if (board[row] & ((((pieces->tertimino & pmask)) << 4 * prow) \
+		if (board[row] & ((((pieces->tetromino & pmask)) << 4 * prow) \
 					>> pieces->x))
 			return (0);
 		rowmask = genmask(0, 0, boardsize);
-		if ((board[row] | ((((pieces->tertimino & pmask)) << 4 * prow) \
+		if ((board[row] | ((((pieces->tetromino & pmask)) << 4 * prow) \
 						>> pieces->x)) & rowmask)
 			return (0);
 		++prow;
@@ -59,7 +59,7 @@ int		piece_fit(uint16_t *board, int boardsize, t_mino *pieces)
 
 int		r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 {
-	if (!pieces->tertimino)
+	if (!pieces->tetromino)
 		return (1);
 	pieces->y = (pieces->last) ? pieces->last->y : 0;
 	while (pieces->y < boardsize)
@@ -74,14 +74,11 @@ int		r_solve(int boardsize, t_mino *pieces, uint16_t *board)
 				if (r_solve(boardsize, pieces + 1, board))
 					return (1);
 				play_piece(board, boardsize, pieces);
-				if (pieces->tertimino == (pieces + 1)->cache)
-					return (0);
 			}
 			pieces->x++;
 		}
 		pieces->y++;
 	}
-	pieces->cache = pieces->tertimino;
 	return (0);
 }
 
@@ -123,13 +120,9 @@ int		main(int argc, char **argv)
 		return (1);
 	}
 	if ((fd = open(argv[1], O_RDONLY)) < 0)
-		return (1);
+		return (error(0, stored_array));
 	if (valid_input(fd, stored_array) == 1)
-	{
-		ft_putstr("error");
-		freethem(stored_array);
-		return (1);
-	}
+		return (error(1, stored_array));
 	clear_board(board);
 	solve(piece_gen(stored_array, pieces), board);
 	free(stored_array);

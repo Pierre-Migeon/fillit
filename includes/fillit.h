@@ -6,12 +6,13 @@
 /*   By: pmigeon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/03 17:28:51 by pmigeon           #+#    #+#             */
-/*   Updated: 2019/01/28 14:23:55 by pmigeon          ###   ########.fr       */
+/*   Updated: 2019/02/02 16:29:28 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FILLIT_H
 # define FILLIT_H
+# define MAXBOARDSIZE 16
 
 # include <fcntl.h>
 # include <stdlib.h>
@@ -20,11 +21,10 @@
 
 typedef struct		s_mino
 {
-	uint16_t		tertimino;
+	uint16_t		tetromino;
 	char			id;
 	int				x;
 	int				y;
-	uint16_t		cache;
 	int				boardsize[2];
 	struct s_mino	*last;
 }					t_mino;
@@ -52,5 +52,6 @@ void				freethem(char **str);
 t_mino				*findlast(t_mino pieces[27], int i);
 t_mino				*piece_gen(char **str, t_mino pieces[27]);
 int					retfunc(t_mino *pieces, int boardsize);
+int					error(int i, char **stored_array);
 
 #endif

@@ -1,28 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print.c                                            :+:      :+:    :+:   */
+/*   diverse_functions_3.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ghdesfos <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: pmigeon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/01/22 10:37:44 by ghdesfos          #+#    #+#             */
-/*   Updated: 2019/02/02 16:27:33 by pmigeon          ###   ########.fr       */
+/*   Created: 2019/01/31 16:16:58 by pmigeon           #+#    #+#             */
+/*   Updated: 2019/02/02 16:27:18 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/fillit.h"
 
-void	print_binary(uint16_t row, int boardsize)
+int		error(int i, char **stored_array)
 {
-	int bit;
-	int i;
-
-	bit = 32768;
-	i = 0;
-	while (bit && i < boardsize)
-	{
-		ft_putchar('0' + ((bit & row) && 1));
-		bit >>= 1;
-		++i;
-	}
+	(i == 0) ? free(stored_array) : freethem(stored_array);
+	ft_putstr("error\n");
+	return (-1);
 }

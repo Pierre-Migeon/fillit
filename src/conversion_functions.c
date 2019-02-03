@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   conversion_functions.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmigeon  <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ghdesfos <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/22 10:46:31 by ghdesfos          #+#    #+#             */
-/*   Updated: 2019/01/28 14:26:37 by pmigeon          ###   ########.fr       */
+/*   Updated: 2019/02/02 16:26:19 by pmigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ char		*convert_to_string(int boardsize, t_mino *pieces)
 	piece = 0;
 	out = ft_strnew(boardsize * (boardsize + 1));
 	makedots(out, boardsize * (boardsize + 1), boardsize);
-	while (pieces[piece].tertimino && (i = -1) == -1)
+	while (pieces[piece].tetromino && (i = -1) == -1)
 	{
 		j = 0;
 		bit = 32768;
@@ -53,7 +53,7 @@ char		*convert_to_string(int boardsize, t_mino *pieces)
 		{
 			if (i > 0 && i % 4 == 0)
 				j += boardsize - 3;
-			if (bit & pieces[piece].tertimino)
+			if (bit & pieces[piece].tetromino)
 				out[j + i + pieces[piece].x \
 					+ (pieces[piece].y * (boardsize + 1))] = pieces[piece].id;
 			bit >>= 1;
