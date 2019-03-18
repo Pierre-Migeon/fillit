@@ -5,4 +5,4 @@ Usage:
 
 ./fillit tertimino_file
 
-Written in collaboration with ghdesfos.
+Pierre Migeon wrote the code, and ghdesfos offered helpful suggestions and defended the first portion of the code.
